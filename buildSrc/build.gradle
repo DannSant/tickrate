@@ -1,0 +1,10 @@
+// buildSrc is a small build of its own that Gradle compiles before the main build.
+// This plugin turns every .gradle file under src/main/groovy into a plugin
+// that modules can apply by its file name (e.g. 'tickrate.java-conventions').
+plugins {
+    id 'groovy-gradle-plugin'
+}
+
+repositories {
+    gradlePluginPortal()
+}

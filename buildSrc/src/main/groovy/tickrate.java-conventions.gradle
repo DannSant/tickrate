@@ -1,0 +1,29 @@
+// Shared build conventions for every Java module: how we compile and how we test.
+// Modules apply this with `id 'tickrate.java-conventions'` and add only their own dependencies.
+plugins {
+    id 'java'
+}
+
+group = 'io.github.dannsant.tickrate'
+version = '0.1.0-SNAPSHOT'
+
+java {
+    // Compile and test with JDK 21, no matter which JDK runs Gradle itself.
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    // Turn on every compiler warning and fail the build on any of them.
+    options.compilerArgs.addAll(['-Xlint:all', '-Werror'])
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+    testLogging {
+        events 'failed', 'skipped'
+        exceptionFormat = 'full'
+    }
+}

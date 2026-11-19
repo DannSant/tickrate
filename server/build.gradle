@@ -1,0 +1,17 @@
+plugins {
+    id 'tickrate.java-conventions'
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.dependency.management)
+}
+
+description = 'Spring Boot application: HTTP and WebSocket APIs, matchmaking, game rooms, persistence.'
+
+dependencies {
+    implementation project(':game-core')
+
+    implementation libs.spring.boot.starter.webmvc
+    implementation libs.spring.boot.starter.actuator
+
+    testImplementation libs.spring.boot.starter.test
+    testRuntimeOnly libs.junit.platform.launcher
+}

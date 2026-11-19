@@ -1,0 +1,13 @@
+rootProject.name = 'tickrate'
+
+// Every module gets its dependencies from Maven Central, declared once here.
+// FAIL_ON_PROJECT_REPOS stops a module from quietly adding its own repository.
+dependencyResolutionManagement {
+    repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
+    repositories {
+        mavenCentral()
+    }
+}
+
+include 'game-core'
+include 'server'

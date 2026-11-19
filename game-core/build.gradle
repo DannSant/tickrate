@@ -1,0 +1,16 @@
+plugins {
+    id 'tickrate.java-conventions'
+    id 'java-library'
+}
+
+description = 'Pure game logic: simulation, rating and matchmaking rules. No framework dependencies.'
+
+dependencies {
+    // No main dependencies, on purpose. Spring, Redis and JDBC aren't on this module's
+    // classpath, so code here can't use them: the build enforces the boundary.
+
+    testImplementation platform(libs.junit.bom)
+    testImplementation libs.junit.jupiter
+    testImplementation libs.assertj.core
+    testRuntimeOnly libs.junit.platform.launcher
+}
