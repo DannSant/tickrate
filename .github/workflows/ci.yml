@@ -1,0 +1,50 @@
+name: CI
+
+# Runs on every push to any branch. This is a solo repository, so feature branches are pushed
+# here directly. If outside contributors ever open pull requests from forks, add a `pull_request` trigger.
+on:
+  push:
+  workflow_dispatch:
+
+# Least privilege: this workflow only needs to read the code.
+permissions:
+  contents: read
+
+# If you push again before the previous run finishes, cancel the old run.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    # Third-party actions are pinned to a full commit SHA, not a tag. A tag can be moved to
+    # point at different code; a SHA can't. Dependabot keeps the SHAs and version comments up to date.
+    steps:
+      - name: Check out code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+        with:
+          distribution: temurin
+          java-version: 21
+
+      # Caches Gradle dependencies and build output between runs, and checks that
+      # gradle-wrapper.jar is an official Gradle release.
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+
+      - name: Build and run tests
+        run: ./gradlew build
+
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: test-reports
+          path: '**/build/reports/tests/'
+          retention-days: 7

@@ -1,0 +1,20 @@
+# Dependabot opens pull requests when dependencies have new versions.
+# Minor and patch updates are grouped into one weekly PR per ecosystem to keep the noise down;
+# major updates still get their own PR, because they can break things and deserve a separate look.
+version: 2
+updates:
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      gradle-minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions-minor-and-patch:
+        update-types: [minor, patch]
