@@ -1,0 +1,12 @@
+# Normalize line endings: store LF in the repository, regardless of the OS that committed.
+* text=auto eol=lf
+
+# Windows scripts must keep CRLF or cmd.exe can misbehave.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files: never touch line endings or try to diff them.
+*.jar binary
+*.png binary
+*.gif binary
+*.ico binary

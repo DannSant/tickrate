@@ -1,0 +1,33 @@
+# --- Gradle ---
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# --- Java ---
+*.class
+*.log
+hs_err_pid*
+
+# --- Node / client ---
+node_modules/
+dist/
+
+# --- IDEs ---
+.idea/
+*.iml
+.vscode/
+!.vscode/extensions.json
+.settings/
+.project
+.classpath
+bin/
+out/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- Local environment (secrets live here, never in git) ---
+.env
+.env.*
+!.env.example
