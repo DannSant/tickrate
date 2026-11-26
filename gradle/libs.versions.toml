@@ -2,11 +2,11 @@
 # Build files refer to these entries as libs.<name> and libs.plugins.<name>.
 
 [versions]
-spring-boot = "4.1.2"
+spring-boot = "4.2.0"
 spring-dependency-management = "1.1.7"
 # game-core doesn't use Spring, so it pins its test libraries here.
 # Keep these equal to the versions Spring Boot manages, so both modules test with the same libraries.
-junit = "6.0.3"
+junit = "6.1.3"
 assertj = "3.27.7"
 
 [libraries]
