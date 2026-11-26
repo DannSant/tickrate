@@ -33,6 +33,12 @@ class PlayerInputTest {
     }
 
     @Test
+    void keepsTheDashRequestAndDefaultsToNoDash() {
+        assertThat(new PlayerInput(1, 0, true).dash()).isTrue();
+        assertThat(new PlayerInput(1, 0).dash()).isFalse();
+    }
+
+    @Test
     void treatsNaNAsNoMovement() {
         assertThat(new PlayerInput(Double.NaN, 1)).isEqualTo(PlayerInput.NONE);
         assertThat(new PlayerInput(1, Double.NaN)).isEqualTo(PlayerInput.NONE);

@@ -1,7 +1,8 @@
 package io.github.dannsant.tickrate.core.sim;
 
 /**
- * What a player wants to do during one tick: the direction they want to move in.
+ * What a player wants to do during one tick: the direction they want to move in, and whether they
+ * want to dash.
  *
  * <p>This comes from the network, so it can't be trusted. The constructor turns any values into a safe
  * direction, so every {@code PlayerInput} that exists is valid:
@@ -10,13 +11,15 @@ package io.github.dannsant.tickrate.core.sim;
  *   <li>each component is clamped to [-1, 1], so huge values can't overflow;</li>
  *   <li>a direction longer than 1 (for example a diagonal (1, 1)) is shortened to length 1.</li>
  * </ul>
- * The result: no input can make a player faster than the rules allow. That's the server being
+ * The result: no input can make a player faster than the rules allow. A dash request is only a
+ * request too; the simulation ignores it while the dash is cooling down. That's the server being
  * authoritative. The client asks; the simulation decides.
  *
  * @param moveX horizontal direction, -1 (left) to 1 (right)
  * @param moveY vertical direction, -1 (up) to 1 (down), matching screen coordinates
+ * @param dash  true if the player asks to start a dash this tick
  */
-public record PlayerInput(double moveX, double moveY) {
+public record PlayerInput(double moveX, double moveY, boolean dash) {
 
     public static final PlayerInput NONE = new PlayerInput(0, 0);
 
@@ -33,6 +36,11 @@ public record PlayerInput(double moveX, double moveY) {
             moveX /= length;
             moveY /= length;
         }
+    }
+
+    /** Movement without a dash request. */
+    public PlayerInput(double moveX, double moveY) {
+        this(moveX, moveY, false);
     }
 
     /** The movement direction as a vector of length 0 to 1. */

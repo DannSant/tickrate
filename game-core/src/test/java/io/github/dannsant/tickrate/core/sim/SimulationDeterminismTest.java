@@ -49,8 +49,8 @@ class SimulationDeterminismTest {
         // Exact doubles, not "close to": any difference in floating-point behavior would show up here.
         assertThat(end).isEqualTo(new GameState(
                 1200,
-                new PlayerState(new Vector2(1564.1020797896356, 335.8998188013207), 586),
-                new PlayerState(new Vector2(1559.007935154069, 286.60231848952856), 614),
+                new PlayerState(new Vector2(1564.1020797896356, 335.8998188013207), 586, 0, 0),
+                new PlayerState(new Vector2(1559.007935154069, 286.60231848952856), 614, 0, 0),
                 PlayerSlot.FIRST,
                 17));
     }

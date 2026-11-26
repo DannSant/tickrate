@@ -15,6 +15,7 @@ import java.util.Objects;
  * @param ticksPerSecond how many simulation steps run per second
  * @param matchDuration  how long a match lasts
  * @param tagCooldown    after a tag, how long until the next tag is allowed (no instant tag-backs)
+ * @param dash           the dash settings
  */
 public record GameRules(
         double arenaWidth,
@@ -24,7 +25,8 @@ public record GameRules(
         double itPlayerSpeed,
         int ticksPerSecond,
         Duration matchDuration,
-        Duration tagCooldown) {
+        Duration tagCooldown,
+        DashRules dash) {
 
     public GameRules {
         requirePositive(arenaWidth, "arenaWidth");
@@ -40,17 +42,29 @@ public record GameRules(
         }
         Objects.requireNonNull(matchDuration, "matchDuration");
         Objects.requireNonNull(tagCooldown, "tagCooldown");
+        Objects.requireNonNull(dash, "dash");
         if (toTicks(matchDuration, ticksPerSecond) <= 0) {
             throw new IllegalArgumentException("matchDuration must last at least one tick, was " + matchDuration);
         }
         if (tagCooldown.isNegative()) {
             throw new IllegalArgumentException("tagCooldown must not be negative, was " + tagCooldown);
         }
+        if (toTicks(dash.duration(), ticksPerSecond) <= 0) {
+            throw new IllegalArgumentException("a dash must last at least one tick, was " + dash.duration());
+        }
     }
 
     /** The rules Tickrate is played with: a 16:9 arena, 20 ticks per second and 60-second matches. */
     public static GameRules standard() {
-        return new GameRules(1600, 900, 24, 300, 315, 20, Duration.ofSeconds(60), Duration.ofSeconds(1));
+        return new GameRules(
+                1600, 900, 24, 300, 315, 20, Duration.ofSeconds(60), Duration.ofSeconds(1), DashRules.standard());
+    }
+
+    /** The same rules with a different match length; handy for tests and short demo matches. */
+    public GameRules withMatchDuration(Duration newMatchDuration) {
+        return new GameRules(
+                arenaWidth, arenaHeight, playerRadius, playerSpeed, itPlayerSpeed,
+                ticksPerSecond, newMatchDuration, tagCooldown, dash);
     }
 
     /**
@@ -74,6 +88,16 @@ public record GameRules(
     /** The tag cooldown in ticks (20 with standard rules). */
     public int tagCooldownTicks() {
         return Math.toIntExact(toTicks(tagCooldown, ticksPerSecond));
+    }
+
+    /** How many ticks a dash lasts (5 with standard rules). */
+    public int dashDurationTicks() {
+        return Math.toIntExact(toTicks(dash.duration(), ticksPerSecond));
+    }
+
+    /** How many ticks after a dash starts until the next one is allowed (60 with standard rules). */
+    public int dashCooldownTicks() {
+        return Math.toIntExact(toTicks(dash.cooldown(), ticksPerSecond));
     }
 
     /** Converts a duration to whole ticks, rounding down. Integer math, so no rounding surprises. */

@@ -44,7 +44,7 @@ public final class Simulation {
     /**
      * Advances the match by one tick. Within a tick, things happen in this order:
      * <ol>
-     *   <li>both players move (the "it" player a little faster);</li>
+     *   <li>both players move (the "it" player a little faster, and anyone dashing twice as fast);</li>
      *   <li>the tick is counted against whoever was "it" during it;</li>
      *   <li>if the players touch and the tag cooldown is over, "it" passes to the other player.</li>
      * </ol>
@@ -92,12 +92,32 @@ public final class Simulation {
         return new MatchResult.Win(comparison < 0 ? PlayerSlot.FIRST : PlayerSlot.SECOND);
     }
 
-    /** Moves one player for one tick and, if they are "it", counts the tick against them. */
+    /**
+     * Moves one player for one tick: starts a dash if they asked for one and it's ready, moves them
+     * (faster while dashing), counts the tick against them if they are "it", and counts down the dash
+     * timers.
+     */
     private PlayerState advance(PlayerState player, PlayerInput input, boolean isIt) {
+        int dashTicksRemaining = player.dashTicksRemaining();
+        int dashCooldown = player.dashCooldownTicks();
+        if (input.dash() && dashCooldown == 0) {
+            // The cooldown starts with the dash, so dashes are at most one cooldown apart.
+            dashTicksRemaining = rules.dashDurationTicks();
+            dashCooldown = rules.dashCooldownTicks();
+        }
+
         double distance = isIt ? rules.itPlayerDistancePerTick() : rules.playerDistancePerTick();
+        if (dashTicksRemaining > 0) {
+            distance *= rules.dash().speedMultiplier();
+        }
         Vector2 position = keepInsideArena(player.position().plus(input.direction().times(distance)));
         long ticksAsIt = isIt ? player.ticksAsIt() + 1 : player.ticksAsIt();
-        return new PlayerState(position, ticksAsIt);
+
+        return new PlayerState(
+                position,
+                ticksAsIt,
+                Math.max(0, dashTicksRemaining - 1),
+                Math.max(0, dashCooldown - 1));
     }
 
     /** Clamps a player's center so the whole circle stays inside the arena walls. */

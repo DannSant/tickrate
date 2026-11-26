@@ -11,8 +11,7 @@ import org.junit.jupiter.api.Test;
 class SimulationMatchEndTest {
 
     /** Standard rules, but a one-second (20-tick) match so tests run it to the end quickly. */
-    private static final GameRules ONE_SECOND_MATCH =
-            new GameRules(1600, 900, 24, 300, 315, 20, Duration.ofSeconds(1), Duration.ofSeconds(1));
+    private static final GameRules ONE_SECOND_MATCH = GameRules.standard().withMatchDuration(Duration.ofSeconds(1));
 
     private final Simulation simulation = new Simulation(ONE_SECOND_MATCH);
 
@@ -58,8 +57,8 @@ class SimulationMatchEndTest {
     private static GameState finishedMatch(long firstTicksAsIt, long secondTicksAsIt) {
         return new GameState(
                 20,
-                new PlayerState(new Vector2(200, 450), firstTicksAsIt),
-                new PlayerState(new Vector2(1400, 450), secondTicksAsIt),
+                new PlayerState(new Vector2(200, 450), firstTicksAsIt, 0, 0),
+                new PlayerState(new Vector2(1400, 450), secondTicksAsIt, 0, 0),
                 FIRST,
                 0);
     }
